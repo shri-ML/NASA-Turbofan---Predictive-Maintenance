@@ -104,7 +104,7 @@ print('Testing RMSE, Random Forest: ',rmse_test_rf)
 # 2. Plotting Trees (using plot tree function from sklearn.tree)
 # 3. Spearman Correlation for Curved Data
 # 4. Group K-Folds in Cross-Validation
-# 5. Remember! np.where, pd.cut(..)
+# 5. Remember! np.where, pd.cut(..)..
 
 #%% - Plotting Space
 
