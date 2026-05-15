@@ -1,4 +1,4 @@
-#%%
+#%% Modules Import 
 import numpy as np
 import pandas as pd
 
@@ -15,7 +15,7 @@ from sklearn.svm import SVR
 
 from xgboost import XGBRegressor
 
-#%%
+#%% Operations on Training Data
 """Training Data"""
 
 # Reading, getting RUL # 
@@ -59,7 +59,7 @@ df_train_label = df_train['RUL'].copy().clip(upper=125)
 scaler = StandardScaler()
 df_train_input = pd.DataFrame(data=scaler.fit_transform(df_train_input),columns=df_train_input.columns)
 
-#%%
+#%% Training Models using Transformed Training Data 
 """ Fitting some models and checking their Prediction RMSE """
 
 Groups = GroupKFold(n_splits=5)
@@ -90,7 +90,8 @@ print('XGB RMSE: ',rmse_xgb)
 cross_xgb = pd.Series(-cross_val_score(estimator=xgb, X=df_train_input,y=df_train_label,cv=Groups,groups=df_train['unit_nr'],scoring='neg_root_mean_squared_error'))
 print('XGB CV Mean: ',cross_xgb.mean())
 
-#%%
+#%% Checking Model Performance on Testing Data 
+
 """ Test Data """
 
 df_test = pd.read_csv('FD001/test_FD001.txt',names=col_names,sep=r'\s+')
@@ -130,12 +131,13 @@ print('Test Error, SVM: ',rmse_test_svr)
 rmse_test_xgb = root_mean_squared_error(df_test_label,xgb.predict(df_test_input))
 print('Test Error, XGB: ',rmse_test_xgb)
 
-#%%
+
+#%% Learnings
 # 1. Did some more feature engineering (polynomial combinations of some sensor values).
 # 2. Did LR, RFR, SVM and XGBoost -> Least train and test RMSE was from RFR
 # 3. Used SVM but don't understand hyperparameters yet. 
  
-#%%: Adding Rate of Change 
+#%% Plotting Space
 path = rfr.estimators_[0].cost_complexity_pruning_path(df_train_input,df_train_label)
 imp_plot_df = pd.DataFrame({'ccp_alpha':path.ccp_alphas,'impurity':path.impurities})
 
