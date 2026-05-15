@@ -76,7 +76,7 @@ print('RFR RMSE: ',rmse_rfr)
 cross_vrfr = pd.Series(-cross_val_score(estimator=rfr,X=df_train_input,y=df_train_label,cv=Groups,groups=df_train['unit_nr'],scoring='neg_root_mean_squared_error'))
 print('RFR CV Mean: ',cross_vrfr.mean())
 
-svr = SVR(kernel='rbf',C=10,epsilon=0.1)
+svr = SVR(kernel='rbf',C=10,epsilon=0.5)
 svr.fit(df_train_input,df_train_label)
 rmse_svr = root_mean_squared_error(df_train_label,svr.predict(df_train_input))
 print('SVR RMSE: ',rmse_svr)
@@ -90,9 +90,9 @@ print('XGB RMSE: ',rmse_xgb)
 cross_xgb = pd.Series(-cross_val_score(estimator=xgb, X=df_train_input,y=df_train_label,cv=Groups,groups=df_train['unit_nr'],scoring='neg_root_mean_squared_error'))
 print('XGB CV Mean: ',cross_xgb.mean())
 
-
 #%%
 """ Test Data """
+
 df_test = pd.read_csv('FD001/test_FD001.txt',names=col_names,sep=r'\s+')
 df_test.drop(columns=['sns_22','sns_23','sns_24','sns_25','sns_26'],inplace=True)
 
@@ -130,7 +130,11 @@ print('Test Error, SVM: ',rmse_test_svr)
 rmse_test_xgb = root_mean_squared_error(df_test_label,xgb.predict(df_test_input))
 print('Test Error, XGB: ',rmse_test_xgb)
 
-
+#%%
+# 1. Did some more feature engineering (polynomial combinations of some sensor values).
+# 2. Did LR, RFR, SVM and XGBoost -> Least train and test RMSE was from RFR
+# 3. Used SVM but don't understand hyperparameters yet. 
+ 
 #%%: Adding Rate of Change 
 path = rfr.estimators_[0].cost_complexity_pruning_path(df_train_input,df_train_label)
 imp_plot_df = pd.DataFrame({'ccp_alpha':path.ccp_alphas,'impurity':path.impurities})
