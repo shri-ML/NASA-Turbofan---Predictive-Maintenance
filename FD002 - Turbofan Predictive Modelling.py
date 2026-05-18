@@ -14,14 +14,15 @@ from sklearn.model_selection import cross_val_score,GroupKFold
 from xgboost import XGBRegressor
 
 #%% Operations on Training Data
-col_names = ['unit_nr','life_cycles','os_1','os_2','os_3','os_4','os_5','os_6']
+col_names,col_names_1 = ['unit_nr','life_cycles','os_1','os_2','os_3','os_4','os_5','os_6']
 for i in range(1,19):
     col_names.append(f'sns_{i}')
 df_train = pd.read_csv('FD002/train_FD002.txt',names=col_names,sep=r'\s+')
 
-df_corr = df_train.groupby('unit_nr').apply(lambda x: x.drop(columns=['unit_nr']).corr(method='spearman')['life_cycles']).reset_index()
-df_corr
 
+#%%
+df_train['os_combination'] = df_train[['os_1','os_2','os_3']].astype(str).agg('-'.join,axis=1)
+df_train.groupby('os_combination').transform(lambda x: x.drop(col_names_1))
 
 
 #%% Training Models on Transformed Training Data
