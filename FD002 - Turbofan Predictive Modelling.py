@@ -13,16 +13,21 @@ from sklearn.model_selection import cross_val_score,GroupKFold
 
 from xgboost import XGBRegressor
 
+import openpyxl
 #%% Operations on Training Data
-col_names,col_names_1 = ['unit_nr','life_cycles','os_1','os_2','os_3','os_4','os_5','os_6']
+col_names = ['unit_nr','life_cycles','os_1','os_2','os_3','os_4','os_5','os_6']
+col_names_1 = col_names.copy()
 for i in range(1,19):
     col_names.append(f'sns_{i}')
 df_train = pd.read_csv('FD002/train_FD002.txt',names=col_names,sep=r'\s+')
 
-
 #%%
+df_train['os_1'] = df_train['os_1'].round(0)
+df_train['os_2'] = df_train['os_2'].round(1)
+df_train['os_3'] = df_train['os_3'].round(0)
 df_train['os_combination'] = df_train[['os_1','os_2','os_3']].astype(str).agg('-'.join,axis=1)
-df_train.groupby('os_combination').transform(lambda x: x.drop(col_names_1))
+df_train['os_combination'].value_counts()
+
 
 
 #%% Training Models on Transformed Training Data
